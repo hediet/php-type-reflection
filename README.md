@@ -46,4 +46,9 @@ $this->assertEquals("myArg", $myArgParam->getName());
 $this->assertEquals("Some input.", $myArgParam->getDescription());
 $this->assertEquals("Hediet\Types\Test\MyClass", $myArgParam->getType()->getName());
 
+?>
 ```
+
+Class Diagram
+-------------
+![class diagram](docs/class-diagram.png)

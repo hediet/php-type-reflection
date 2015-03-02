@@ -76,6 +76,20 @@ class ParseMethodBlockResult
     public $parameter;
 
 }
+
+class ResultInfo
+{
+    /**
+     * @var string
+     */
+    public $type;
+    
+    /**
+     * @var string
+     */
+    public $description;
+}
+
 class ParseMethodBlockResult_Parameter
 {
     /**
@@ -105,13 +119,10 @@ class Collection extends \ArrayObject
 {
     private $type;
     
-    public function __construct(
-        array $types = array(),
-        Context $context = null
-    ) {
+    public function __construct(array $types = array(), Context $context = null) 
+    {
         $this->type = implode("|", $types);
     }
-
 
     public function __toString()
     {

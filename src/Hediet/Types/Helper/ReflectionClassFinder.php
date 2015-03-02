@@ -5,7 +5,7 @@ namespace Hediet\Types\Helper;
 use Doctrine\Common\Reflection\ClassFinderInterface;
 use ReflectionClass;
 
-class ReflectionFinder implements ClassFinderInterface
+class ReflectionClassFinder implements ClassFinderInterface
 {
     public function findFile($class)
     {

@@ -7,10 +7,11 @@ use ReflectionException;
 
 abstract class Type
 {
-
     // <editor-fold defaultstate="collapsed" desc="of-Primitive">
 
     /**
+     * Gets the type of integer.
+     * 
      * @return PrimitiveType
      */
     public static function ofInteger()
@@ -19,6 +20,8 @@ abstract class Type
     }
 
     /**
+     * Gets the type of float.
+     * 
      * @return PrimitiveType
      */
     public static function ofFloat()
@@ -27,6 +30,8 @@ abstract class Type
     }
 
     /**
+     * Gets the type of string.
+     * 
      * @return PrimitiveType
      */
     public static function ofString()
@@ -35,6 +40,8 @@ abstract class Type
     }
 
     /**
+     * Gets the type of boolean.
+     * 
      * @return PrimitiveType
      */
     public static function ofBoolean()
@@ -43,6 +50,8 @@ abstract class Type
     }
 
     /**
+     * Gets the type of mixed.
+     * 
      * @return PrimitiveType
      */
     public static function ofMixed()
@@ -51,6 +60,8 @@ abstract class Type
     }
 
     /**
+     * Gets the type of resource.
+     * 
      * @return PrimitiveType
      */
     public static function ofResource()
@@ -59,6 +70,8 @@ abstract class Type
     }
 
     /**
+     * Gets the type of object.
+     * 
      * @return PrimitiveType
      */
     public static function ofObject()
@@ -69,17 +82,20 @@ abstract class Type
     // </editor-fold>
 
     /**
+     * Gets an array type which elements are of type $itemType.
      * 
-     * @param Type $itemType
+     * @param Type $itemType The type of the elements.
      * @return ArrayType
      */
     public static function ofArray(Type $itemType)
     {
         return ArrayType::__internal_create(Type::ofMixed(), $itemType);
     }
-    
+
     /**
-     * @param string $fullName
+     * Gets a class or interface type with a given name.
+     * 
+     * @param string $fullName The name of the class or interface.
      * @return ObjectType
      */
     public static function ofObjectType($fullName)
@@ -89,25 +105,28 @@ abstract class Type
             throw new \InvalidArgumentException("Argument 'fullName' does not describe a class or interface.");
         return $result;
     }
-    
+
     /**
-     * @param ReflectionClass $reflectionClass
+     * Gets a class or interface type by a reflection class.
+     * 
+     * @param ReflectionClass $reflectionClass The reflection class.
      * @return ObjectType
      */
     public static function byReflectionClass(ReflectionClass $reflectionClass)
     {
         return self::ofObjectType($reflectionClass->getName());
     }
-    
-    
+
     /**
      * Gets the type with the provided name.
-     * Throws an exception if the type is malformed.
+     * Throws an exception if the type is malformed or does not exist.
      *
-     * @param $typeName string the type name. Must include the full namespace if resolver is not set.
+     * @param string $typeName The type name. Must include the full namespace if resolver is not set.
      * If resolver is set, absolute class or interface names must start with "\".
+     * @param RelativeClassNameResolver $resolver The resolver which resolves relative type names to absolute ones.
+     * If the resolver is not provided, relative names are assumed as absolute.
      */
-    public static function of($typeName, ShortClassNameResolver $resolver = null)
+    public static function of($typeName, RelativeClassNameResolver $resolver = null)
     {
         $result = PrimitiveType::parse($typeName);
 
@@ -118,7 +137,7 @@ abstract class Type
                 $itemType = self::of(substr($typeName, 0, -2), $resolver);
                 return self::ofArray($itemType);
             }
-            
+
             if ($typeName === "array")
             {
                 return self::ofArray(self::ofMixed());
@@ -135,14 +154,14 @@ abstract class Type
             }
             else
             {
-                $realTypeName = $resolver->resolveShortClassName($typeName);
+                $realTypeName = $resolver->resolveRelativeName($typeName);
             }
-            
+
             $isInterface = interface_exists($realTypeName);
-            
+
             if (!($isInterface || class_exists($realTypeName)))
                 throw new ReflectionException("Class or Interface '" . $realTypeName . "' does not exist.");
-            
+
             if ($isInterface)
                 return InterfaceType::__internal_create($realTypeName);
             else
@@ -173,14 +192,14 @@ abstract class Type
      * Checks whether values with the provided type can be assigned
      * to this type.
      *
-     * @param Type $type
+     * @param Type $type The provided type.
      * @return boolean
      */
     public abstract function isAssignableFrom(Type $type);
 
     /**
      * Checks whether the provided value can be assigned to this type.
-     * @param $value
+     * @param $value The provided value.
      * @return boolean
      */
     public abstract function isAssignableFromValue($value);

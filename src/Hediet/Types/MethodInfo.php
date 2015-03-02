@@ -48,7 +48,7 @@ class MethodInfo
 
     /**
      *
-     * @var ShortClassNameResolver
+     * @var RelativeClassNameResolver
      */
     private $resolver;
 

@@ -4,9 +4,9 @@ namespace Hediet\Types\Helper;
 
 use Doctrine\Common\Reflection\StaticReflectionParser;
 use Hediet\Types\MethodInfo;
-use Hediet\Types\ShortClassNameResolver;
+use Hediet\Types\RelativeClassNameResolver;
 
-class ParserClassNameResolver implements ShortClassNameResolver
+class ParserClassNameResolver implements RelativeClassNameResolver
 {
     /**
      * @var MethodInfo
@@ -28,11 +28,11 @@ class ParserClassNameResolver implements ShortClassNameResolver
         $this->methodInfo = $methodInfo;
     }
     
-    public function resolveShortClassName($shortClassName)
+    public function resolveRelativeName($shortClassName)
     {
         if ($this->useStatements === null)
         {
-            $p = new StaticReflectionParser($this->methodInfo->getDeclaringType()->getName(), new ReflectionFinder());
+            $p = new StaticReflectionParser($this->methodInfo->getDeclaringType()->getName(), new ReflectionClassFinder());
 
             $m = $p->getReflectionMethod($this->methodInfo->getName());
 
