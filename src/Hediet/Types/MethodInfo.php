@@ -124,7 +124,7 @@ class MethodInfo
     /**
      * @return ResultInfo
      */
-    public function getResult()
+    public function getResultInfo()
     {
         if (!$this->initialized)
             $this->initialize();
@@ -162,7 +162,7 @@ class MethodInfo
         
         return $this->parameterTypeCache[$parameter->name];
     }
-
+    
     /**
      * @return ParameterInfo[]
      */
