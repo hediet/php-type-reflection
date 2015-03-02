@@ -1,6 +1,11 @@
 <?php
+
 namespace Hediet\Types;
 
+/**
+ * Represents an array with a key and item type.
+ * By default the key and item type are mixed.
+ */
 class ArrayType extends Type
 {
     public static function __internal_create(Type $keyType, Type $itemType)
@@ -42,11 +47,9 @@ class ArrayType extends Type
     {
         if (!$type instanceof ArrayType)
             return false;
-        if (!($type->itemType->isAssignableFrom($this->itemType) &&
-              $this->itemType->isAssignableFrom($type->itemType)))
+        if (!$type->itemType->equals($this->itemType))
             return false;
-        if (!($type->keyType->isAssignableFrom($this->keyType) &&
-              $this->keyType->isAssignableFrom($type->keyType)))
+        if (!$type->keyType->equals($this->keyType))
             return false;
         
         return true;
@@ -67,6 +70,8 @@ class ArrayType extends Type
     }
 
     /**
+     * Gets the key type.
+     * 
      * @return Type
      */
     public function getKeyType()
@@ -75,6 +80,8 @@ class ArrayType extends Type
     }
     
     /**
+     * Gets the item type.
+     * 
      * @return Type
      */
     public function getItemType()

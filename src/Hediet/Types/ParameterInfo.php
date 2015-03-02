@@ -34,6 +34,8 @@ class ParameterInfo
     }
 
     /**
+     * Gets the name of the parameter.
+     * 
      * @return string
      */
     public function getName()
@@ -42,6 +44,8 @@ class ParameterInfo
     }
 
     /**
+     * Gets the method which declares the parameter.
+     * 
      * @return MethodInfo
      */
     public function getDeclaringMethod()
@@ -58,6 +62,8 @@ class ParameterInfo
     }
 
     /**
+     * Gets the description of the parameter.
+     * 
      * @return string
      */
     public function getDescription()
@@ -66,6 +72,8 @@ class ParameterInfo
     }
 
     /**
+     * Gets the type of the parameter.
+     * 
      * @return Type
      */
     public function getType()

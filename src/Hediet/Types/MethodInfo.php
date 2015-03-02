@@ -111,6 +111,8 @@ class MethodInfo
 
 
     /**
+     * Gets the description of the method.
+     * 
      * @return string
      */
     public function getDescription()
@@ -122,6 +124,9 @@ class MethodInfo
 
 
     /**
+     * Gets an info object for the result of this method.
+     * Will be null, if this method does not return a result.
+     * 
      * @return ResultInfo
      */
     public function getResultInfo()

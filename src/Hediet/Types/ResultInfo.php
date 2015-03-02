@@ -15,6 +15,7 @@ class ResultInfo
     }
 
     /**
+     * Gets the type of the result.
      * 
      * @return Type
      */
@@ -24,6 +25,7 @@ class ResultInfo
     }
 
     /**
+     * Gets the description of the result.
      * 
      * @return string
      */

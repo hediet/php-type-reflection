@@ -1,14 +1,18 @@
 <?php
+
 namespace Hediet\Types;
 
 class ClassType extends ObjectType
 {
+
     public static function __internal_create($className)
     {
         return new ClassType($className);
     }
 
-
+    /**
+     * @var string
+     */
     private $className;
 
     /**
@@ -19,18 +23,18 @@ class ClassType extends ObjectType
         $this->className = $className;
     }
 
-/* TODO
-    public function getProperties()
-    {
+    /* TODO
+      public function getProperties()
+      {
 
-    }
+      }
 
-    public function getProperty($name)
-    {
+      public function getProperty($name)
+      {
 
-    }
-*/
-    
+      }
+     */
+
     /**
      * Gets the name of the type.
      *
@@ -61,6 +65,7 @@ class ClassType extends ObjectType
 
     /**
      * Checks whether the provided value can be assigned to this type.
+     * 
      * @param $value
      * @return boolean
      */
@@ -74,4 +79,31 @@ class ClassType extends ObjectType
 
         return is_subclass_of($value, $this->className);
     }
+
+    /**
+     * Checks whether the class implements the interface $type.
+     * 
+     * @param InterfaceType $type The interface.
+     * @return boolean
+     */
+    public function isImplementorOf(InterfaceType $type)
+    {
+        return $this->getReflectionClass()->implementsInterface($type->getName());
+    }
+
+    /**
+     * Gets all interfaces that this class implements.
+     * 
+     * @return InterfaceType[]
+     */
+    public function getImplementedInterfaces()
+    {
+        $result = array();
+        foreach ($this->getReflectionClass()->getInterfaces() as $interface)
+        {
+            $result[] = Type::byReflectionClass($interface);
+        }
+        return $result;
+    }
+
 }

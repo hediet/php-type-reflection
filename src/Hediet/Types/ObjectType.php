@@ -46,7 +46,16 @@ abstract class ObjectType extends Type {
         return MethodInfo::__internal_create($this, $m);
     }
 
-
+    /**
+     * @param \Hediet\Types\ObjectType $type
+     * @return boolean
+     */
+    public function isSubtypeOf(ObjectType $type)
+    {
+        return $this->getReflectionClass()->isSubclassOf($type->getName());
+    }
+    
+    
     /*
      public function isGenericType();
 

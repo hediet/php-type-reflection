@@ -2,6 +2,7 @@
 
 namespace Hediet\Types;
 
+use InvalidArgumentException;
 use ReflectionClass;
 use ReflectionException;
 
@@ -102,7 +103,7 @@ abstract class Type
     {
         $result = self::of($fullName);
         if (!($result instanceof ObjectType))
-            throw new \InvalidArgumentException("Argument 'fullName' does not describe a class or interface.");
+            throw new InvalidArgumentException("Argument 'fullName' does not describe a class or interface.");
         return $result;
     }
 
@@ -203,4 +204,15 @@ abstract class Type
      * @return boolean
      */
     public abstract function isAssignableFromValue($value);
+    
+    /**
+     * Checks whether the type is equal to $other.
+     * 
+     * @param Type $other The other type.
+     * @return boolean
+     */
+    public function equals(Type $other)
+    {
+        return $other->isAssignableFrom($this) && $this->isAssignableFrom($other);
+    }
 }

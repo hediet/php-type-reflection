@@ -45,11 +45,11 @@ class InterfaceType extends ObjectType
 
         if ($type instanceof InterfaceType)
         {
-            return $type->getReflectionClass()->isSubclassOf($this->getName());
+            return $type->isSubtypeOf($this);
         }
         else if ($type instanceof ClassType)
         {
-            return $type->getReflectionClass()->implementsInterface($this->getName());
+            return $type->isImplementorOf($this);
         }
         return false;
     }
