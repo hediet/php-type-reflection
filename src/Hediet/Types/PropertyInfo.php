@@ -1,7 +1,6 @@
 <?php
 
-namespace Hediet\Reflection;
-
+namespace Hediet\Types;
 
 class PropertyInfo
 {

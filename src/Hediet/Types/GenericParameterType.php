@@ -1,4 +1,5 @@
 <?php
+
 namespace Hediet\Types;
 
 class GenericParameterType extends Type

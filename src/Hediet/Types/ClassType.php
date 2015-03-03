@@ -60,7 +60,7 @@ class ClassType extends ObjectType
         if (!($type instanceof ClassType))
             return false;
 
-        return $this->getReflectionClass()->isSubclassOf($type->getName());
+        return $type->isSubtypeOf($this);
     }
 
     /**

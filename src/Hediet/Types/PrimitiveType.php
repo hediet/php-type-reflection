@@ -13,12 +13,14 @@ class PrimitiveType extends Type
     const MIXED_NAME = "mixed";
     const RESOURCE_NAME = "resource";
     const OBJECT_NAME = "object";
+    const NULL_NAME = "null";
 
     private static $cachedTypes;
 
     public static function parse($typeName)
     {
-        $normalize = array("int" => self::INTEGER_NAME, "bool" => self::BOOLEAN_NAME);
+        $normalize = array("int" => self::INTEGER_NAME, 
+            "bool" => self::BOOLEAN_NAME, "double" => self::FLOAT_NAME);
 
         if (isset($normalize[$typeName]))
             $typeName = $normalize[$typeName];
@@ -32,7 +34,8 @@ class PrimitiveType extends Type
                 self::BOOLEAN_NAME => new PrimitiveType(self::BOOLEAN_NAME),
                 self::MIXED_NAME => new PrimitiveType(self::MIXED_NAME),
                 self::RESOURCE_NAME => new PrimitiveType(self::RESOURCE_NAME),
-                self::OBJECT_NAME => new PrimitiveType(self::OBJECT_NAME));
+                self::OBJECT_NAME => new PrimitiveType(self::OBJECT_NAME),
+                self::NULL_NAME => new PrimitiveType(self::NULL_NAME));
         }
 
         if (isset(self::$cachedTypes[$typeName]))
@@ -83,6 +86,8 @@ class PrimitiveType extends Type
                 return is_resource($value);
             case self::OBJECT_NAME:
                 return is_object($value);
+            case self::NULL_NAME:
+                return is_null($value);
             default:
                 throw new Exception("Implementation error");
         }

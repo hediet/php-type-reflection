@@ -79,6 +79,16 @@ abstract class Type
     {
         return PrimitiveType::parse(PrimitiveType::OBJECT_NAME);
     }
+    
+    /**
+     * Gets the type of null.
+     * 
+     * @return PrimitiveType
+     */
+    public static function ofNull()
+    {
+        return PrimitiveType::parse(PrimitiveType::NULL_NAME);
+    }
 
     // </editor-fold>
 
@@ -106,6 +116,46 @@ abstract class Type
             throw new InvalidArgumentException("Argument 'fullName' does not describe a class or interface.");
         return $result;
     }
+    
+    /**
+     * Gets a type which unites the given types.
+     * @param Type[] $types The types to unite.
+     * @return Type The united type. May not be a UnionType, if it would unite only a single type.
+     */
+    public static function ofUnion(array $types)
+    {
+        return UnionType::__internal_create($types);
+    }
+    
+    /**
+     * 
+     * @param mixed $value
+     * @return Type
+     */
+    public static function byValue($value)
+    {
+        if (is_object($value))
+            return self::of(get_class($value));
+        else if (is_array($value))
+        {
+            //todo: find most common type of items
+            return self::ofArray(self::ofMixed());
+        }
+        else if (is_string($value))
+            return self::ofString();
+        else if (is_bool($value))
+            return self::ofBoolean();
+        else if (is_resource($value))
+            return self::ofResource();
+        else if (is_int($value))
+            return self::ofInteger();
+        else if (is_float($value))
+            return self::ofFloat();
+        else if ($value === null)
+            return self::of("null"); //TODO
+        
+        throw new \Exception("Each value must have a type.");
+    }
 
     /**
      * Gets a class or interface type by a reflection class.
@@ -129,6 +179,15 @@ abstract class Type
      */
     public static function of($typeName, RelativeClassNameResolver $resolver = null)
     {
+        $parts = explode("|", $typeName);
+        if (count($parts) > 1)
+        {
+            $types = array();
+            foreach ($parts as $part)
+                $types[] = self::of($part, $resolver);
+            return self::ofUnion($types);
+        }
+        
         $result = PrimitiveType::parse($typeName);
 
         if ($result == null)
@@ -213,6 +272,14 @@ abstract class Type
      */
     public function equals(Type $other)
     {
-        return $other->isAssignableFrom($this) && $this->isAssignableFrom($other);
+        $result = $other->isAssignableFrom($this) && $this->isAssignableFrom($other);
+        $result2 = $this->getName() === $other->getName();
+        
+        //Are there any types which do not have the same name, but are assignable to each other?
+        //(United types are sorted by their names)
+        if ($result !== $result2)
+            throw new \Exception("This should not happen - please report a bug!");
+        
+        return $result;
     }
 }
