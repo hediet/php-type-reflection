@@ -14,6 +14,7 @@ class PrimitiveType extends Type
     const RESOURCE_NAME = "resource";
     const OBJECT_NAME = "object";
     const NULL_NAME = "null";
+    const CALLABLE_NAME = "callable";
 
     private static $cachedTypes;
 
@@ -35,7 +36,8 @@ class PrimitiveType extends Type
                 self::MIXED_NAME => new PrimitiveType(self::MIXED_NAME),
                 self::RESOURCE_NAME => new PrimitiveType(self::RESOURCE_NAME),
                 self::OBJECT_NAME => new PrimitiveType(self::OBJECT_NAME),
-                self::NULL_NAME => new PrimitiveType(self::NULL_NAME));
+                self::NULL_NAME => new PrimitiveType(self::NULL_NAME),
+                self::CALLABLE_NAME => new PrimitiveType(self::CALLABLE_NAME));
         }
 
         if (isset(self::$cachedTypes[$typeName]))
@@ -64,7 +66,11 @@ class PrimitiveType extends Type
             return true;
         if ($this->name === self::OBJECT_NAME)
             return ($type instanceof ObjectType);
-
+        if ($this->name === self::CALLABLE_NAME)
+        {
+            if ($type instanceof ObjectType)
+                return $type->getReflectionClass()->hasMethod("__invoke");
+        }
         return false;
     }
 
@@ -88,6 +94,8 @@ class PrimitiveType extends Type
                 return is_object($value);
             case self::NULL_NAME:
                 return is_null($value);
+            case self::CALLABLE_NAME:
+                return is_callable($value);
             default:
                 throw new Exception("Implementation error");
         }
