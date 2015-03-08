@@ -18,7 +18,7 @@ class UnionType extends Type
         foreach ($types as $type)
         {
             if ($type instanceof UnionType)
-                $newTypes += $type->getTypes();
+                $newTypes = array_merge($newTypes, $type->getTypes());
             else
                 $newTypes[$type->getName()] = $type;
         }

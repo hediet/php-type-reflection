@@ -21,7 +21,10 @@ class PrimitiveType extends Type
     public static function parse($typeName)
     {
         $normalize = array("int" => self::INTEGER_NAME, 
-            "bool" => self::BOOLEAN_NAME, "double" => self::FLOAT_NAME);
+            "bool" => self::BOOLEAN_NAME, 
+            "double" => self::FLOAT_NAME,
+            "real" => self::FLOAT_NAME,
+            "long" => self::INTEGER_NAME);
 
         if (isset($normalize[$typeName]))
             $typeName = $normalize[$typeName];

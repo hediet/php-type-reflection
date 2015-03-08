@@ -33,13 +33,13 @@ abstract class MyClass
     public abstract function myMethod($myArg);
 }
 
-class FooTest extends PHPUnit_Framework_TestCase
+class TypeTest extends PHPUnit_Framework_TestCase
 {
-
-    public function testMe()
+       
+    public function testDescription()
     {
         $m = Type::ofObjectType("Hediet\Types\Test\MyClass")->getMethod("myMethod");
-
+        
         $this->assertEquals("Does some stuff.", $m->getDescription());
         $this->assertEquals("The return value.", $m->getResultInfo()->getDescription());
 
@@ -57,9 +57,10 @@ class FooTest extends PHPUnit_Framework_TestCase
         $this->assertEquals("myArg", $myArgParam->getName());
         $this->assertEquals("Some input.", $myArgParam->getDescription());
         $this->assertEquals("Hediet\Types\Test\MyClass|Hediet\Types\Type", $myArgParam->getType()->getName());
+    }
 
-
-        //Union Types
+    public function testUnionType()
+    {
         $fooInterface = Type::of("Hediet\Types\Test\FooInterface");
         $foo = Type::of("Hediet\Types\Test\Foo");
         $fooOrFooInterface = Type::ofUnion(array($fooInterface, $foo));
@@ -85,5 +86,6 @@ class FooTest extends PHPUnit_Framework_TestCase
                 Type::ofUnion(array($foo, Type::ofBoolean(), Type::ofNull()))->isAssignableFrom(
                         Type::ofUnion(array(Type::ofBoolean(), $foo))));
     }
-
+    
+    
 }

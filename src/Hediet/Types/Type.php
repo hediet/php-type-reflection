@@ -120,7 +120,7 @@ abstract class Type
     /**
      * Gets a type which unites the given types.
      * @param Type[] $types The types to unite.
-     * @return Type The united type. May not be a UnionType, if it would unite only a single type.
+     * @return Type The united type. Need not to be a UnionType, if it would unite only a single type.
      */
     public static function ofUnion(array $types)
     {
@@ -220,7 +220,7 @@ abstract class Type
             $isInterface = interface_exists($realTypeName);
 
             if (!($isInterface || class_exists($realTypeName)))
-                throw new ReflectionException("Class or Interface '" . $realTypeName . "' does not exist.");
+                throw new ReflectionException("Type '" . $realTypeName . "' does not exist.");
 
             if ($isInterface)
                 return InterfaceType::__internal_create($realTypeName);
