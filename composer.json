@@ -22,10 +22,9 @@
         "exclude": ["/nbproject"]
     },
     
-    
     "require": {
         "php": ">=5.3.0",
         "phpdocumentor/reflection-docblock": "^2.0.4",
-        "doctrine/common": "^2.4.2"
+        "doctrine/annotations": "^2.4.2"
     }
 }
