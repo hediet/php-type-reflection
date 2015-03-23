@@ -21,7 +21,7 @@ class UnionType extends Type
         foreach ($types as $type)
         {
             if ($type instanceof UnionType)
-                $newTypes = array_merge($newTypes, $type->getTypes());
+                $newTypes = array_merge($newTypes, $type->getUnitedTypes());
             else
                 $newTypes[$type->getName()] = $type;
         }
@@ -118,7 +118,7 @@ class UnionType extends Type
     public function getName(array $options = array())
     {
         $result = "";
-        foreach ($this->getTypes() as $type)
+        foreach ($this->getUnitedTypes() as $type)
         {
             if ($result !== "")
                 $result .= "|";
@@ -137,7 +137,7 @@ class UnionType extends Type
             //example: Foo|null is assignable to object|null,
             //But Foo|string|null is not assignable to object|string.
             
-            foreach ($type->getTypes() as $subType)
+            foreach ($type->getUnitedTypes() as $subType)
             {
                 if (!$this->isAssignableFrom($subType))
                     return false;
@@ -147,7 +147,7 @@ class UnionType extends Type
         }
         else
         {
-            foreach ($this->getTypes() as $subType)
+            foreach ($this->getUnitedTypes() as $subType)
             {
                 if ($subType->isAssignableFrom($type))
                     return true;
@@ -158,7 +158,7 @@ class UnionType extends Type
 
     public function isAssignableFromValue($value)
     {
-        foreach ($this->getTypes() as $type)
+        foreach ($this->getUnitedTypes() as $type)
         {
             if ($type->isAssignableFromValue($value))
                 return true;
@@ -171,7 +171,7 @@ class UnionType extends Type
      * 
      * @return Type[]
      */
-    public function getTypes()
+    public function getUnitedTypes()
     {
         return $this->types;
     }

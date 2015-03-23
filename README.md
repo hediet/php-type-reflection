@@ -3,8 +3,96 @@ PHP Type Reflection
 
 This library provides classes to reflect php types in an unified way.
 
-Example Usage
--------------
+Installation
+------------
+You can use [Composer](http://getcomposer.org/) to download and install PHP Type Reflection.
+To add PHP Type Reflection to your project, simply add a dependency on hediet/type-reflection to your project's `composer.json` file.
+
+Here is a minimal example of a `composer.json` file that just defines a dependency on PHP Type Reflection:
+
+``` json
+{
+    "require": {
+        "hediet/type-reflection": "^0.1.2"
+    }
+}
+```
+
+Usage
+-----
+
+### Static Methods of the Type Class ###
+
+There are several static methods to get a type instance:
+``` php
+<?php
+
+use Hediet\Types\Type;
+
+// Primitive types
+Type::ofInteger();
+Type::ofFloat();
+Type::ofString();
+Type::ofBoolean();
+Type::ofMixed();
+Type::ofResource();
+Type::ofObject();
+Type::ofNull();
+
+// Non-primitive types
+Type::ofArray($itemType); //$itemType must be a Type
+Type::ofObjectType($fullName); //can be either a class or interface
+Type::ofClass($fullName);
+Type::ofInterface($fullName);
+Type::ofUnion($types); //$types must be a Type array
+
+Type::byValue($value);
+Type::byReflectionClass($reflectionClass);
+Type::of($typeName); //$typeName can be an arbitrary type name
+Type::of($typeName, $resolver); //A resolver can be used to resolve relative class names.
+
+?>
+```
+
+### Methods of the Type Class ###
+
+There are several methods defined for type instances:
+``` php
+<?php
+
+// Common methods
+$type->getName(); //Gets an unique name of $type. Two equal types have the same name.
+$type->isAssignableFrom($otherType); //Checks whether values of $otherType can be assigned to $type.
+$type->isAssignableFromValue($value); //Checks whether $value can be assigned to $type.
+$type->equals($otherType); //Checks whether $type is equal to $otherType.
+
+// Methods for ObjectType
+$type->getReflectionClass();
+$type->getMethods(); //Gets a MethodInfo array.
+$type->getMethod($name);
+$type->isSubtypeOf($otherType);
+
+// Methods for ClassType
+$type->getProperties(); //Gets a PropertyInfo array.
+$type->getProperty();
+$type->isImplementorOf($interfaceType);
+$type->getImplementedInterfaces();
+
+// Methods for ArrayType
+$type->getKeyType();
+$type->getItemType();
+
+// Methods for UnionType
+$type->getUnitedTypes();
+
+?>
+```
+
+### MethodInfo, ParameterInfo, ResultInfo and PropertyInfo ###
+
+Alls these info classes provide type information and a description by parsing the php doc comments.
+
+### Examples ###
 
 ``` php
 <?php
