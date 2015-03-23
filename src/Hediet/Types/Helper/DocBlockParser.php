@@ -4,19 +4,25 @@ namespace Hediet\Types\Helper;
 
 use Hediet\Types\Helper\ResultInfo;
 use phpDocumentor\Reflection\DocBlock;
+use phpDocumentor\Reflection\DocBlock\Tag\VarTag;
+use phpDocumentor\Reflection\DocBlock\Tag\ParamTag;
 use phpDocumentor\Reflection\DocBlock\Tag\ReturnTag;
-use phpDocumentor\Reflection\DocBlock\Tag;
+use ReflectionFunctionAbstract;
 use ReflectionMethod;
 use ReflectionProperty;
 
 class DocBlockParser
 {
 
-    public static function parseMethodDocBlock(ReflectionMethod $reflectionMethod)
+    /**
+     * @param ReflectionMethod $reflector
+     * @return ParseMethodBlockResult
+     */
+    public static function parseFunctionDocBlock(ReflectionFunctionAbstract $reflector)
     {
-        $phpdoc = new DocBlock($reflectionMethod->getDocComment());
+        $phpdoc = new DocBlock($reflector->getDocComment());
 
-        /* @var $paramTags Tag\ParamTag[] */
+        /* @var $paramTags ParamTag[] */
         $paramTags = $phpdoc->getTagsByName("param");
         $returnTags = $phpdoc->getTagsByName("return");
 
@@ -51,11 +57,39 @@ class DocBlockParser
         return $result;
     }
 
-    public function parsePropertyDocBlock(ReflectionProperty $reflectionProperty)
+    /**
+     * 
+     * @param ReflectionProperty $reflector
+     * @return ParsePropertyBlockResult
+     */
+    public function parsePropertyDocBlock(ReflectionProperty $reflector)
     {
-        //todo
+        $phpdoc = new DocBlock($reflector->getDocComment());
+        /* @var $varTags VarTag[] */
+        $varTags = $phpdoc->getTagsByName("var");
+        /* @var $varTag VarTag */
+        $varTag = $varTags[0];
+        
+        $result = new ParsePropertyBlockResult();
+        $result->description = $phpdoc->getShortDescription();
+        $result->type = (string)$varTag->getType();
+        
+        return $result;
     }
+}
 
+
+class ParsePropertyBlockResult
+{
+    /**
+     * @var string
+     */
+    public $description;
+    
+    /**
+     * @var string
+     */
+    public $type;
 }
 
 class ParseMethodBlockResult
@@ -115,6 +149,7 @@ class ParseMethodBlockResult_Parameter
 namespace phpDocumentor\Reflection\DocBlock\Type;
 
 //To prevent the original collection from expanding the type name.
+//TODO get rid of this hack
 class Collection extends \ArrayObject
 {
     private $type;

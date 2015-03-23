@@ -3,9 +3,6 @@ PHP Type Reflection
 
 This library provides classes to reflect php types in an unified way.
 
-THIS LIBRARY IS STILL IN DEVELOPMENT and serves only as preview.
-More documentation will be available on first real release.
-
 Example Usage
 -------------
 
@@ -29,7 +26,12 @@ class Foo implements FooInterface
 
 abstract class MyClass
 {
-
+    /**
+     * The name.
+     * @var MyClass|string
+     */
+    public $name;
+    
     /**
      * Does some stuff.
      * @param Type|MyClass|ArrayType $myArg Some input.
@@ -37,6 +39,11 @@ abstract class MyClass
      */
     public abstract function myMethod($myArg);
 }
+
+$p = Type::ofClass("Hediet\\Types\\Test\\MyClass")->getProperty("name");
+$this->assertEquals("The name.", $p->getDescription());
+$this->assertEquals("Hediet\\Types\\Test\\MyClass|string", $p->getType()->getName());
+
 
 $m = Type::ofObjectType("Hediet\Types\Test\MyClass")->getMethod("myMethod");
 
@@ -91,3 +98,11 @@ $this->assertTrue(
 Class Diagram
 -------------
 ![class diagram](docs/class-diagram.png)
+
+
+TODO
+----
+* Add support for FunctionInfo.  
+  This requires to parse the use statements manually, as the StaticReflectionParser does not support reflecting functions.
+* Add support for generic classes, methods and functions (like [this](https://gist.github.com/mvriel/3823010)).
+* Enable reflecting types which are not loaded.

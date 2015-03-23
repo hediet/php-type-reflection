@@ -2,13 +2,21 @@
 
 namespace Hediet\Types;
 
-use \ReflectionClass;
+use ReflectionClass;
+use ReflectionException;
 
-abstract class ObjectType extends Type {
-
+/**
+ * Represents either a class or an interface.
+ */
+abstract class ObjectType extends Type 
+{
+    /**
+     * @var ReflectionClass
+     */
     private $reflectionClass;
 
     /**
+     * Gets the reflection class for this object type.
      * 
      * @return ReflectionClass
      */
@@ -22,6 +30,8 @@ abstract class ObjectType extends Type {
     }
 
     /**
+     * Gets a list of all defined methods.
+     * 
      * @return MethodInfo[]
      */
     public function getMethods()
@@ -36,9 +46,11 @@ abstract class ObjectType extends Type {
     }
 
     /**
+     * Gets as method by its name.
      * 
      * @param string $name
      * @return MethodInfo
+     * @throws ReflectionException A reflection exception will be thrown, if the method does not exist.
      */
     public function getMethod($name)
     {
@@ -47,7 +59,9 @@ abstract class ObjectType extends Type {
     }
 
     /**
-     * @param \Hediet\Types\ObjectType $type
+     * Checks whether the provided type is a subclass or subinterface of this type.
+     * 
+     * @param ObjectType $type
      * @return boolean
      */
     public function isSubtypeOf(ObjectType $type)
@@ -56,7 +70,7 @@ abstract class ObjectType extends Type {
     }
     
     
-    /*
+    /* TODO
      public function isGenericType();
 
      public function isClosedGenericType();

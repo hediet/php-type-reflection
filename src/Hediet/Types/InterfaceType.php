@@ -2,6 +2,9 @@
 
 namespace Hediet\Types;
 
+/**
+ * Represents an interface.
+ */
 class InterfaceType extends ObjectType
 {
     public static function __internal_create($interfaceName)
@@ -9,7 +12,10 @@ class InterfaceType extends ObjectType
         return new InterfaceType($interfaceName);
     }
 
-
+    
+    /**
+     * @var string
+     */
     private $interfaceName;
 
     /**
@@ -20,20 +26,19 @@ class InterfaceType extends ObjectType
         $this->interfaceName = $interfaceName;
     }
 
-
     /**
      * Gets the name of the type.
      *
      * @return string
      */
-    public function getName()
+    public function getName(array $options = array())
     {
         return $this->interfaceName;
     }
 
     /**
-     * Checks whether values with the provided type can be assigned
-     * to this interface.
+     * Checks whether the provided type is either an interface that is equal to or extends this interface
+     * or is a class that implements this interface.
      *
      * @param Type $type
      * @return boolean
@@ -55,7 +60,7 @@ class InterfaceType extends ObjectType
     }
 
     /**
-     * Checks whether the provided value can be assigned to this interface.
+     * Checks whether the provided value is an object that implements this interface.
      *
      * @param $value
      * @return boolean

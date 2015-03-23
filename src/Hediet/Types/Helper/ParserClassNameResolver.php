@@ -3,15 +3,14 @@
 namespace Hediet\Types\Helper;
 
 use Doctrine\Common\Reflection\StaticReflectionParser;
-use Hediet\Types\MethodInfo;
 use Hediet\Types\RelativeClassNameResolver;
 
 class ParserClassNameResolver implements RelativeClassNameResolver
 {
     /**
-     * @var MethodInfo
+     * @var string
      */
-    private $methodInfo;
+    private $className;
 
     /**
      * @var string[string] the key must be lowercase
@@ -23,21 +22,19 @@ class ParserClassNameResolver implements RelativeClassNameResolver
      */
     private $namespace;
 
-    public function __construct(MethodInfo $methodInfo)
+    public function __construct($className)
     {
-        $this->methodInfo = $methodInfo;
+        $this->className = $className;
     }
     
     public function resolveRelativeName($shortClassName)
     {
         if ($this->useStatements === null)
         {
-            $p = new StaticReflectionParser($this->methodInfo->getDeclaringType()->getName(), new ReflectionClassFinder());
-
-            $m = $p->getReflectionMethod($this->methodInfo->getName());
-
-            $this->useStatements = $m->getUseStatements();
-            $this->namespace = $m->getNamespaceName();
+            $p = new StaticReflectionParser($this->className, new ReflectionClassFinder());
+            
+            $this->useStatements = $p->getUseStatements();
+            $this->namespace = $p->getNamespaceName();
         }
 
         $matches = array();

@@ -4,7 +4,6 @@ namespace Hediet\Types;
 
 class ResultInfo
 {
-
     private $type;
     private $description;
 

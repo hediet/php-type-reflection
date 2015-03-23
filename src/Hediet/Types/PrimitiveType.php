@@ -4,6 +4,11 @@ namespace Hediet\Types;
 
 use Exception;
 
+/**
+ * Represents a primitive type
+ * This can be either an integer, float, string, 
+ * boolean, mixed, resource, object, null or callable.
+ */
 class PrimitiveType extends Type
 {
     const INTEGER_NAME = "integer";
@@ -18,6 +23,12 @@ class PrimitiveType extends Type
 
     private static $cachedTypes;
 
+    /**
+     * Parses a primitive type name.
+     * Returns null, if the provided type name is not a name of a primitive type.
+     * @param string $typeName
+     * @return PrimitiveType|null
+     */
     public static function parse($typeName)
     {
         $normalize = array("int" => self::INTEGER_NAME, 
@@ -49,18 +60,39 @@ class PrimitiveType extends Type
         return null;
     }
 
+    /**
+     * @var string
+     */
     private $name;
 
+    /**
+     * @param string $name
+     */
     private function __construct($name)
     {
         $this->name = $name;
     }
 
-    public function getName()
+    /**
+     * Gets the name of the primitive type.
+     * 
+     * @param array $options
+     * @return string
+     */
+    public function getName(array $options = array())
     {
         return $this->name;
     }
 
+    /**
+     * Checks whether the provided type is assignable to this type.
+     * Returns true, if the provided type is equal to this instance, or
+     * if this instance is "mixed", or if this is "object" and type is an object type
+     * or if this is "callable" and type is a class with a method __invoke.
+     * 
+     * @param Type $type
+     * @return boolean
+     */
     public function isAssignableFrom(Type $type)
     {
         if ($type->getName() === $this->name)
@@ -77,6 +109,14 @@ class PrimitiveType extends Type
         return false;
     }
 
+    /**
+     * Checks whether the value is assingable to this primitive type.
+     * Internally, the corresponding is_* method is called.
+     * If this type is mixed, true will be returned regardless of the provided value.
+     * 
+     * @param mixed $value
+     * @return boolean
+     */
     public function isAssignableFromValue($value)
     {
         switch ($this->name)
@@ -103,5 +143,4 @@ class PrimitiveType extends Type
                 throw new Exception("Implementation error");
         }
     }
-
 }

@@ -2,9 +2,15 @@
 
 namespace Hediet\Types;
 
+/**
+ * Represents a class.
+ */
 class ClassType extends ObjectType
 {
-
+    /**
+     * @param string $className
+     * @return ClassType
+     */
     public static function __internal_create($className)
     {
         return new ClassType($className);
@@ -23,31 +29,44 @@ class ClassType extends ObjectType
         $this->className = $className;
     }
 
-    /* TODO
-      public function getProperties()
-      {
-
-      }
-
-      public function getProperty($name)
-      {
-
-      }
+    /**
+     * @return PropertyInfo[]
      */
+    public function getProperties()
+    {
+        //todo cache
+        $result = array();
+        foreach ($this->getReflectionClass()->getProperties() as $m)
+        {
+            $result[] = PropertyInfo::__internal_create($this, $m);
+        }
+        return $result;
+    }
 
     /**
-     * Gets the name of the type.
+     * 
+     * @param string $name
+     * @return PropertyInfo
+     */
+    public function getProperty($name)
+    {
+        $m = $this->getReflectionClass()->getProperty($name);
+        return PropertyInfo::__internal_create($this, $m);
+    }
+
+    /**
+     * Gets the full qualified name of the class.
+     * The name does not start with a backslash.
      *
      * @return string
      */
-    public function getName()
+    public function getName(array $options = array())
     {
         return $this->className;
     }
 
     /**
-     * Checks whether values with the provided type can be assigned
-     * to this type.
+     * Checks whether the provided type equals this type or is a subtype of this type.
      *
      * @param Type $type
      * @return boolean
@@ -64,9 +83,9 @@ class ClassType extends ObjectType
     }
 
     /**
-     * Checks whether the provided value can be assigned to this type.
+     * Checks whether the provided value is an instance of either this type or a subclass of this type.
      * 
-     * @param $value
+     * @param mixed $value
      * @return boolean
      */
     public function isAssignableFromValue($value)
@@ -92,7 +111,7 @@ class ClassType extends ObjectType
     }
 
     /**
-     * Gets all interfaces that this class implements.
+     * Gets all interfaces that were implemented by this class.
      * 
      * @return InterfaceType[]
      */

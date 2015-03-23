@@ -6,6 +6,9 @@ use InvalidArgumentException;
 use ReflectionClass;
 use ReflectionException;
 
+/**
+ * Represents a php type.
+ */
 abstract class Type
 {
     // <editor-fold defaultstate="collapsed" desc="of-Primitive">
@@ -114,6 +117,34 @@ abstract class Type
         $result = self::of($fullName);
         if (!($result instanceof ObjectType))
             throw new InvalidArgumentException("Argument 'fullName' does not describe a class or interface.");
+        return $result;
+    }
+    
+    /**
+     * Gets a class type with a given name.
+     * 
+     * @param string $fullName The name of the class.
+     * @return ClassType
+     */
+    public static function ofClass($fullName)
+    {
+        $result = self::of($fullName);
+        if (!($result instanceof ClassType))
+            throw new InvalidArgumentException("Argument 'fullName' does not describe a class.");
+        return $result;
+    }
+    
+    /**
+     * Gets a interface type with a given name.
+     * 
+     * @param string $fullName The name of the interface.
+     * @return InterfaceType
+     */
+    public static function ofInterface($fullName)
+    {
+        $result = self::of($fullName);
+        if (!($result instanceof InterfaceType))
+            throw new InvalidArgumentException("Argument 'fullName' does not describe an interface.");
         return $result;
     }
     
@@ -236,7 +267,7 @@ abstract class Type
      *
      * @return string
      */
-    public abstract function getName();
+    public abstract function getName(array $options = array());
 
     /**
      * Gets the string representation of the type.
@@ -245,7 +276,7 @@ abstract class Type
      */
     public function __toString()
     {
-        return $this->getName();
+        return $this->getName(array());
     }
 
     /**
@@ -259,7 +290,8 @@ abstract class Type
 
     /**
      * Checks whether the provided value can be assigned to this type.
-     * @param $value The provided value.
+     * 
+     * @param mixed $value The provided value.
      * @return boolean
      */
     public abstract function isAssignableFromValue($value);

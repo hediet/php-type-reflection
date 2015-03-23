@@ -4,6 +4,9 @@ namespace Hediet\Types;
 
 use ReflectionParameter;
 
+/**
+ * Represents a parameter with description and type information.
+ */
 class ParameterInfo
 {
     public static function create(ReflectionParameter $parameter)
@@ -12,25 +15,25 @@ class ParameterInfo
         return new ParameterInfo($methodInfo, $parameter);
     }
 
-    public static function __internal_create(MethodInfo $declaringMethod, ReflectionParameter $parameter)
+    public static function __internal_create(AbstractFunctionInfo $declaringFunction, ReflectionParameter $parameter)
     {
-        return new ParameterInfo($declaringMethod, $parameter);
+        return new ParameterInfo($declaringFunction, $parameter);
     }
 
     /**
      * @var MethodInfo
      */
-    private $declaringMethod;
+    private $declaringFunction;
 
     /**
      * @var ReflectionParameter
      */
-    private $reflectionParameter;
+    private $reflector;
 
-    private function __construct(MethodInfo $declaringMethod, ReflectionParameter $reflectionParameter)
+    private function __construct(AbstractFunctionInfo $declaringFunction, ReflectionParameter $reflector)
     {
-        $this->declaringMethod = $declaringMethod;
-        $this->reflectionParameter = $reflectionParameter;
+        $this->declaringFunction = $declaringFunction;
+        $this->reflector = $reflector;
     }
 
     /**
@@ -40,25 +43,27 @@ class ParameterInfo
      */
     public function getName()
     {
-        return $this->reflectionParameter->getName();
+        return $this->reflector->getName();
     }
 
     /**
-     * Gets the method which declares the parameter.
+     * Gets the function or method which declares the parameter.
      * 
-     * @return MethodInfo
+     * @return AbstractFunctionInfo
      */
-    public function getDeclaringMethod()
+    public function getDeclaringFunction()
     {
-        return $this->declaringMethod;
+        return $this->declaringFunction;
     }
     
     /**
+     * Gets the reflector for this parameter.
+     * 
      * @return ReflectionParameter
      */
-    public function getReflectionParameter()
+    public function getReflector()
     {
-        return $this->reflectionParameter;
+        return $this->reflector;
     }
 
     /**
@@ -68,7 +73,8 @@ class ParameterInfo
      */
     public function getDescription()
     {
-        return $this->declaringMethod->__internal_getParameterDescription($this->getReflectionParameter());
+        return $this->declaringFunction->__internal_getParameterDescription(
+                $this->getReflector());
     }
 
     /**
@@ -78,6 +84,7 @@ class ParameterInfo
      */
     public function getType()
     {
-        return $this->declaringMethod->__internal_getParameterType($this->getReflectionParameter());
+        return $this->declaringFunction->__internal_getParameterType(
+                $this->getReflector());
     }
 }

@@ -24,7 +24,12 @@ class Foo implements FooInterface
 
 abstract class MyClass
 {
-
+    /**
+     * The name.
+     * @var MyClass|string
+     */
+    public $name;
+    
     /**
      * Does some stuff.
      * @param Type|MyClass|ArrayType $myArg Some input.
@@ -35,10 +40,17 @@ abstract class MyClass
 
 class TypeTest extends PHPUnit_Framework_TestCase
 {
-       
+
+    public function testProperty()
+    {
+        $p = Type::ofClass("Hediet\\Types\\Test\\MyClass")->getProperty("name");
+        $this->assertEquals("The name.", $p->getDescription());
+        $this->assertEquals("Hediet\\Types\\Test\\MyClass|string", $p->getType()->getName());
+    }
+    
     public function testDescription()
     {
-        $m = Type::ofObjectType("Hediet\Types\Test\MyClass")->getMethod("myMethod");
+        $m = Type::ofObjectType("Hediet\\Types\\Test\\MyClass")->getMethod("myMethod");
         
         $this->assertEquals("Does some stuff.", $m->getDescription());
         $this->assertEquals("The return value.", $m->getResultInfo()->getDescription());
@@ -56,9 +68,20 @@ class TypeTest extends PHPUnit_Framework_TestCase
         $myArgParam = $m->getParameters()[0];
         $this->assertEquals("myArg", $myArgParam->getName());
         $this->assertEquals("Some input.", $myArgParam->getDescription());
-        $this->assertEquals("Hediet\Types\Test\MyClass|Hediet\Types\Type", $myArgParam->getType()->getName());
+        $this->assertEquals("Hediet\\Types\\Test\\MyClass|Hediet\\Types\\Type", $myArgParam->getType()->getName());
     }
-
+    
+    
+    
+    public function testUnionTypeSorting()
+    {
+        $union = Type::ofUnion(array(Type::ofNull(), Type::ofString()));
+        $this->assertEquals("string|null", $union->getName());
+        
+        $union = Type::ofUnion(array(Type::ofString(), Type::ofNull(), Type::ofObjectType("Hediet\\Types\\Test\\MyClass")));
+        $this->assertEquals("Hediet\\Types\\Test\\MyClass|string|null", $union->getName());
+    }
+    
     public function testUnionType()
     {
         $fooInterface = Type::of("Hediet\Types\Test\FooInterface");

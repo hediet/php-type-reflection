@@ -2,6 +2,8 @@
 
 namespace Hediet\Types;
 
+//TODO this class is currently not supported
+
 class GenericParameterType extends Type
 {
     public static function __internal_create($name, Type $declaringType)
@@ -41,7 +43,7 @@ class GenericParameterType extends Type
     }
     
 
-    public function getName()
+    public function getName(array $options = array())
     {
         return $this->name;
     }

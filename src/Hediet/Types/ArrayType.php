@@ -29,7 +29,15 @@ class ArrayType extends Type
         $this->itemType = $itemType;
     }
     
-    public function getName()
+    /**
+     * Gets the string representation of this type.
+     * If key and value are mixed, "array" is returned.
+     * If only key is mixed, "T[]" is returned, where T is the name of the value type.
+     * Otherwise, "array<K, V>" is returned, where K is the name of the key type.
+     * 
+     * @return string The string representation.
+     */
+    public function getName(array $options = array())
     {
         if ($this->keyType === Type::ofMixed())
         {
@@ -43,6 +51,13 @@ class ArrayType extends Type
                 . "," . $this->itemType->getName() . ">"; 
     }
 
+    /**
+     * Checks whether the provided type represents
+     * an array whose key and value type are equal to the key and value type of this instance.
+     *
+     * @param Type $type The provided type.
+     * @return boolean
+     */
     public function isAssignableFrom(Type $type)
     {
         if (!$type instanceof ArrayType)
@@ -55,6 +70,13 @@ class ArrayType extends Type
         return true;
     }
 
+    /**
+     * Checks whether the provided value is an array and all keys and values
+     * are assignable to the key and value type of this instance.
+     * 
+     * @param mixed $value The provided value.
+     * @return boolean
+     */
     public function isAssignableFromValue($value)
     {
         if (!is_array($value))

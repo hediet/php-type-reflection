@@ -2,6 +2,9 @@
 
 namespace Hediet\Types;
 
+/**
+ * Resolves a relative class name to an absolute class name.
+ */
 interface RelativeClassNameResolver
 {
     /**

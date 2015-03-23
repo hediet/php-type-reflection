@@ -2,6 +2,9 @@
 
 namespace Hediet\Types;
 
+/**
+ * Represents a union of types.
+ */
 class UnionType extends Type
 {
     /**
@@ -22,8 +25,23 @@ class UnionType extends Type
             else
                 $newTypes[$type->getName()] = $type;
         }
-        ksort($newTypes); //to ensure that $a->equals($b) ==> $a->getName() === $b->getName()
-        //(string|object)|Foo => string|Foo
+        
+        //to ensure that $a->equals($b) ==> $a->getName() === $b->getName()
+        usort($newTypes, function(Type $a, Type $b) 
+        {
+            //order: non-primitives, primitives, null
+            if ($a->equals(Type::ofNull()))
+                return ($b->equals(Type::ofNull())) ? 0 : 1;
+            else if ($b->equals(Type::ofNull()))
+                return -1;
+            
+            if (($a instanceof PrimitiveType) === ($b instanceof PrimitiveType))
+                return strcmp($a->getName(), $b->getName());
+            
+            return ($a instanceof PrimitiveType) ? 1 : -1;
+        });
+        
+        //(object|string)|Foo => Foo|string
         $result = self::removeCoveredTypes($newTypes);
         
         if (count($result) === 1)
@@ -32,6 +50,11 @@ class UnionType extends Type
         return new UnionType($result);
     }
     
+    /**
+     * 
+     * @param Type[] $types
+     * @return Type[]
+     */
     private static function removeCoveredTypes(array $types)
     {
         /* @var $result Type[] */
@@ -76,12 +99,23 @@ class UnionType extends Type
      */
     private $types;
     
+    /**
+     * 
+     * @param Type[] $types
+     */
     private function __construct(array $types)
     {
         $this->types = $types;
     }
 
-    public function getName()
+    /**
+     * Gets the name of the union type.
+     * This name is canonical, so two equal union types have the same name.
+     * 
+     * @param array $options
+     * @return string
+     */
+    public function getName(array $options = array())
     {
         $result = "";
         foreach ($this->getTypes() as $type)
@@ -133,6 +167,8 @@ class UnionType extends Type
     }
 
     /**
+     * Gets a list of the united types.
+     * 
      * @return Type[]
      */
     public function getTypes()

@@ -2,22 +2,33 @@
 
 namespace Hediet\Types;
 
+use Hediet\Types\Helper\DocBlockParser;
+use ReflectionProperty;
+
+/**
+ * Represents a property of a class.
+ */
 class PropertyInfo
 {
+    public static function __internal_create(ClassType $type, ReflectionProperty $reflector) 
+    {
+        return new PropertyInfo($type, $reflector);
+    }    
+    
     /**
-     * @var Type
+     * @var ClassType
      */
     private $declaringType;
+    
     /**
-     * @var \ReflectionProperty
+     * @var ReflectionProperty
      */
-    private $reflectionProperty;
-
+    private $reflector;
 
     /**
      * @var string
      */
-    private $documentation;
+    private $description;
 
     /**
      * @var Type
@@ -26,19 +37,26 @@ class PropertyInfo
 
     private $initialized = false;
 
-    private function __construct(Type $declaringType, \ReflectionProperty $reflectionProperty)
+    private function __construct(ClassType $declaringType, ReflectionProperty $reflector)
     {
         $this->declaringType = $declaringType;
-        $this->reflectionProperty = $reflectionProperty;
-    }
-
-    public function getName()
-    {
-        return $this->reflectionProperty->getName();
+        $this->reflector = $reflector;
     }
 
     /**
-     * @return Type
+     * Gets the name of the property.
+     * 
+     * @return string
+     */
+    public function getName()
+    {
+        return $this->reflector->getName();
+    }
+
+    /**
+     * Gets the class type type which declares this property.
+     * 
+     * @return ClassType
      */
     public function getDeclaringType()
     {
@@ -46,27 +64,44 @@ class PropertyInfo
     }
 
     /**
-     * @return \ReflectionProperty
+     * Gets the reflector for this property.
+     * 
+     * @return ReflectionProperty
      */
-    public function getReflectionProperty()
+    public function getReflector()
     {
-        return $this->reflectionProperty;
+        return $this->reflector;
     }
 
 
     private function initialize()
     {
         $this->initialized = true;
+        
+        $parseResult = DocBlockParser::parsePropertyDocBlock($this->reflector);
+        $this->description = $parseResult->description;
+        
+        $resolver = new Helper\ParserClassNameResolver($this->getDeclaringType()->getName());
+        $this->type = Type::of($parseResult->type, $resolver);
     }
 
-
-    public function getDocumentation()
+    /**
+     * Gets the description of this property.
+     * 
+     * @return string
+     */
+    public function getDescription()
     {
         if (!$this->initialized)
             $this->initialize();
-        return $this->documentation;
+        return $this->description;
     }
 
+    /**
+     * Gets the type of this property.
+     * 
+     * @return Type
+     */
     public function getType()
     {
         if (!$this->initialized)
