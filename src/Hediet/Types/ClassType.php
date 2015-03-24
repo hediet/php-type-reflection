@@ -30,6 +30,8 @@ class ClassType extends ObjectType
     }
 
     /**
+     * Gets a list of all defined properties.
+     * 
      * @return PropertyInfo[]
      */
     public function getProperties()
@@ -44,9 +46,11 @@ class ClassType extends ObjectType
     }
 
     /**
+     * Gets a property by its name.
      * 
      * @param string $name
      * @return PropertyInfo
+     * @throws ReflectionException A reflection exception will be thrown, if the property does not exist.
      */
     public function getProperty($name)
     {
@@ -124,5 +128,4 @@ class ClassType extends ObjectType
         }
         return $result;
     }
-
 }

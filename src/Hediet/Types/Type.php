@@ -159,6 +159,16 @@ abstract class Type
     }
     
     /**
+     * Gets a type that allows the given type to be null.
+     * 
+     * @param \Hediet\Types\Type $type
+     */
+    public static function ofNullable(Type $type)
+    {
+        return self::ofUnion(array($type, Type::ofNull()));
+    }
+    
+    /**
      * 
      * @param mixed $value
      * @return Type

@@ -45,6 +45,7 @@ Type::ofObjectType($fullName); //can be either a class or interface
 Type::ofClass($fullName);
 Type::ofInterface($fullName);
 Type::ofUnion($types); //$types must be a Type array
+Type::ofNullable($type); //$type must be a Type. Returns $type|null.
 
 Type::byValue($value);
 Type::byReflectionClass($reflectionClass);
@@ -194,3 +195,11 @@ TODO
   This requires to parse the use statements manually, as the StaticReflectionParser does not support reflecting functions.
 * Add support for generic classes, methods and functions (like [this](https://gist.github.com/mvriel/3823010)).
 * Enable reflecting types which are not loaded.
+
+Author
+------
+Henning Dieterichs - henning.dieterichs@hediet.de
+
+License
+-------
+PHP Expect is licensed under the MIT License.

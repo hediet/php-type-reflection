@@ -132,7 +132,9 @@ class AbstractFunctionInfo
     {
         if (!$this->initialized)
             $this->initialize();
-        return $this->parseResult->parameter[$parameter->getName()]->description;
+        if (isset($this->parseResult->parameter[$parameter->getName()]))
+            return $this->parseResult->parameter[$parameter->getName()]->description;
+        return "";
     }
 
     /**
@@ -145,10 +147,24 @@ class AbstractFunctionInfo
         {
             if (!$this->initialized)
                 $this->initialize();
-
-            $typeStr = $this->parseResult->parameter[$parameter->getName()]->type;
-            $type = Type::of($typeStr, $this->resolver);
-
+            
+            if (isset($this->parseResult->parameter[$parameter->getName()]))
+            {
+                $typeStr = $this->parseResult->parameter[$parameter->getName()]->type;
+                $type = Type::of($typeStr, $this->resolver);
+            }
+            else
+            {
+                $typeHintedClass = $parameter->getClass();
+                if ($typeHintedClass !== null)
+                    $type = Type::byReflectionClass($typeHintedClass);
+                else
+                    $type = Type::ofMixed();
+                
+                if ($parameter->allowsNull())
+                    $type = Type::ofNullable($type);
+            }
+                
             $this->parameterTypeCache[$parameter->name] = $type;
         }
         
